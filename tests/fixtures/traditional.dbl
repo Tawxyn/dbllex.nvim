@@ -1,0 +1,71 @@
+; ------------------------------------------------------------
+; Synthetic traditional DBL fixture for DBLLex tests.
+; Lexical examples only, not intended to compile or run.
+;
+; This note deliberately contains an apostrophe: don't open a string here.
+; A stray " and a ; should also remain inside this comment.
+; ------------------------------------------------------------
+
+.main
+    .include "examples.def"
+.define ITEM_LIMIT, 4
+
+    record storage
+        mode,         d1, 1
+        note,         a64        ;text buffer
+        factor,       d6.5       ;scaled value
+        item_values,  [ITEM_LIMIT]i4, 4, 3, 2, 1
+        total,        i4
+
+    record layout
+        group elements, [ITEM_LIMIT]a    ;bare type letter
+            key,      a12
+            category, d2
+        endgroup
+    endrecord
+.align
+
+.proc
+    xcall sample_hook(8642, 9)
+.ifdef SAMPLE_FLAG
+    nop
+.endc
+    open(7, i, "sample.txt") [err=input_missing]
+
+    note = "He said ""hello"" to 'visitor'; next part"
+    if (%sample_check(mode, total))
+        goto halt_example
+
+    if (total .eq. 0 .and. .not.mode)
+    begin
+        note = "empty"
+    end
+    else
+    begin
+        writes(1, %atrim(note) +
+&           %string(total))
+        call print_summary
+    end
+
+    for total from 1 thru ITEM_LIMIT
+    begin
+        writes(1, %string(item_values[total]))
+    end
+    if (^size(note) .gt. 12)
+        writes(1, note(13:12))
+    onerror halt_example
+    offerror
+    stop
+
+print_summary,
+    writes(1, note(1,12))
+    return
+
+input_missing,
+    note = "file unavailable"
+    goto halt_example
+halt_example,
+    if (%sample_message(note, total))
+        note = "fallback"
+    stop
+.end

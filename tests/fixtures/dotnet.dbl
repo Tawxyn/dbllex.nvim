@@ -1,0 +1,55 @@
+;;; ------------------------------------------------------------
+;;; Synthetic Synergy .NET fixture for DBLLex tests.
+;;; Lexical examples only, not intended to compile or run.
+;;; ------------------------------------------------------------
+
+import System
+import System.Threading
+
+namespace FixtureDemo
+    class Gauge
+        ;; Enum members retain their declaration indentation.
+        public enum Stage
+            Low,
+            Mid, 2
+            High
+        endenum
+
+        public current, i4
+        public caption,string
+        public tag, a20
+
+        public method Update, void
+        proc
+            this.tag = %datetime
+            this.current = %sample_score(this.current)
+        endmethod
+    endclass
+endnamespace
+
+main
+    record
+        status,     i4
+        label_text, a96, "synthetic text"
+    proc
+        status = %option(2, 0)
+        if (.not. status)
+        begin
+            Console.WriteLine("sample run")
+        end
+
+        try
+        begin
+            status = %sample_score(6)
+        end
+        catch (failure, @System.Exception)
+        begin
+            Console.WriteLine("sample failure: " + failure.Message)
+        end
+        endtry
+
+        data gauge = new FixtureDemo.Gauge()
+        gauge.current = status
+        sleep 2
+        stop
+endmain
