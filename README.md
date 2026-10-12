@@ -1,5 +1,8 @@
 # DBLLex
 
+I like using Neovim for Synergy development, so I put together this small plugin.
+I hope you find it useful too.
+
 Synergy DBL syntax highlighting, indentation, and filetype support for Neovim.
 
 Requires Neovim 0.9 or later. No external dependencies.
